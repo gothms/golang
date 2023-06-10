@@ -1,4 +1,4 @@
-package main
+package basic
 
 import "fmt"
 
@@ -7,9 +7,6 @@ import "fmt"
 2.接口完整性检查
 	var _ Interface = (*Implement)(nil)
 */
-func main() {
-
-}
 
 var _ Interface = (*Implement)(nil)
 

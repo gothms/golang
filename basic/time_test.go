@@ -1,4 +1,4 @@
-package main
+package basic
 
 /*
 1.time.Time 和 time.Duration
@@ -10,6 +10,3 @@ package main
 	如果你要和第三方交互，实在没有办法，也请使用 RFC 3339 的格式
 	最后，如果你要做全球化跨时区的应用，一定要把所有服务器和时间全部使用 UTC 时间
 */
-func main() {
-
-}

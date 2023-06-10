@@ -1,4 +1,4 @@
-package main
+package basic
 
 /*
 defer规则
@@ -6,6 +6,3 @@ defer规则
 	2.延迟函数执行按后进先出顺序执行，即先出现的defer最后执行
 	3.延迟函数可能操作主函数的具名返回值
 */
-func main() {
-
-}

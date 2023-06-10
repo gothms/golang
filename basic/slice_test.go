@@ -1,6 +1,9 @@
-package main
+package basic
 
-import "fmt"
+import (
+	"fmt"
+	"testing"
+)
 
 /*
 1.数据共享
@@ -10,7 +13,7 @@ import "fmt"
 	arr1=arr[:i:i]：后一个参数 i 叫Limited Capacity，后续的 append() 操作会导致重新分配内存
 
 */
-func main() {
+func TestSlice(t *testing.T) {
 	// 1
 	s := make([]int, 5)
 	s[3] = 9

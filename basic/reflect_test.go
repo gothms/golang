@@ -1,15 +1,17 @@
-package main
+package basic
 
 import (
 	"fmt"
 	"reflect"
+	"testing"
 )
 
 /*
 1.reflect.DeepEqual()
 	比较两个结构体中的数据是否相同，就要使用深度比较，而不只是简单地做浅度比较
 */
-func main() {
+
+func TestReflect(t *testing.T) {
 	v1 := data{1, "v1"}
 	v2 := data{1, "v1"}
 	fmt.Println(v1 == v2) // true
