@@ -18,6 +18,8 @@ func TestFn(t *testing.T) {
 	sf := timeSpent(slowFunc)
 	t.Log(sf(10))
 }
+
+// timeSpent f 的定义比较长，不便于阅读（参考自定义类型 type IntConv func(op int) int）
 func timeSpent(f func(op int) int) func(int) int {
 	return func(i int) int {
 		start := time.Now()

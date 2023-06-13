@@ -1,12 +1,47 @@
 package basic
 
-import "fmt"
+import (
+	"fmt"
+	"testing"
+)
 
 /*
+接口：定义对象之间交互的协议
+
+Go接口与其他主要编程语言的差异：Duck Typing 鸭子类型
+	1.接口为非入侵性，实现不依赖于接口定义
+	2.所以接口的定义可以包含在接口使用者包内
+
 1.接口编程
 2.接口完整性检查
 	var _ Interface = (*Implement)(nil)
+3.空接口与断言
+	空接口可以表示任何类型
+	通过断言来将空接口转换为指定类型
+		v, ok := p.(int)
+		p.(type)
+4.Go接口最佳实践
+	4.1.倾向于使用小的接口定义，很多接口只包含一个方法
+	4.2.较大的接口定义，可以由多个小接口定义组合而成
+		type C interface {
+			A
+			B
+		}
+		A B：都是接口
+	4.3.只依赖于必要功能的最小接口
 */
+func TestAssert(t *testing.T) {
+	var v interface{} = 10
+	//v = "10"
+	switch tp := v.(type) {
+	case int:
+		fmt.Println("int", tp)
+	case string:
+		fmt.Println("string", tp)
+	default:
+		fmt.Println("Unknown Type")
+	}
+}
 
 var _ Interface = (*Implement)(nil)
 

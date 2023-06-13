@@ -6,12 +6,26 @@ import (
 )
 
 /*
-1.数据共享
+1.共享存储结构
 2.append()：只要扩容，地址就变了
+
 	在 cap 不够用的时候，会重新分配内存以扩大容量
+
 3.Limited Capacity
+
 	arr1=arr[:i:i]：后一个参数 i 叫Limited Capacity，后续的 append() 操作会导致重新分配内存
 
+4.for range 性能问题
+
+	for _, v := range arr {
+		data = append(data, &v)
+	}
+	解释为：
+	v := 0
+	for i := 0; i < len(arr); i++ {
+		v = arr[i]
+		data = append(data, &v)
+	}
 */
 func TestSlice(t *testing.T) {
 	// 1
@@ -37,4 +51,19 @@ func TestSlice(t *testing.T) {
 	arr1 := arr[:3]
 	arr1 = append(arr1, 0)
 	fmt.Println(arr) // [1 2 3 0 5]
+}
+func TestRange(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5}
+	var data []*int
+	for _, v := range arr {
+		data = append(data, &v)
+	}
+	//v := 0
+	//for i := 0; i < len(arr); i++ {
+	//	v = arr[i]
+	//	data = append(data, &v)
+	//}
+	for _, p := range data {
+		t.Log(*p) // 5,5,5,5,5
+	}
 }
