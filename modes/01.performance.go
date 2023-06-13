@@ -1,4 +1,4 @@
-package basic
+package model
 
 /*
 1.数字转字符串，使用 strconv.Itoa() 比 fmt.Sprintf 快一倍左右

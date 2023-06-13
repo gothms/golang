@@ -1,4 +1,4 @@
-package basic
+package unsafe_test
 
 import (
 	"fmt"
@@ -7,7 +7,10 @@ import (
 )
 
 /*
-1.reflect.DeepEqual()
+1.数组/结构体：可以 ==
+2.切片：不可以 ==
+3.map：不可以 ==
+4.reflect.DeepEqual()
 	比较两个结构体中的数据是否相同，就要使用深度比较，而不只是简单地做浅度比较
 */
 

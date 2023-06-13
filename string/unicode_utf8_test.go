@@ -1,4 +1,4 @@
-package basic
+package string
 
 import (
 	"fmt"
@@ -14,7 +14,6 @@ string
 Unicode UTF8
 	1.Unicode是一种字符集（code point）
 	2.UTF8是Unicode的存储实现（转换为字节序列的规则）
-
 */
 func TestString(t *testing.T) {
 	s := "Go浪"
