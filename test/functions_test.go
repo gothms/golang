@@ -1,4 +1,4 @@
-package advanced
+package test
 
 import "testing"
 
@@ -23,6 +23,7 @@ func TestSquare(t *testing.T) {
 		}
 	}
 }
+
 func TestError(t *testing.T) {
 	t.Log("Start...")
 	t.Error("Error") // 继续执行
