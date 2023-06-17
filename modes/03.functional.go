@@ -1,4 +1,4 @@
-package model
+package modes
 
 import (
 	"crypto/tls"

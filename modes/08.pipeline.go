@@ -1,4 +1,4 @@
-package model
+package modes
 
 /*
 原文：https://time.geekbang.com/column/article/330463?utm_source=pc_cp&utm_term=pc_interstitial_1346

@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+/*
+使用对象池的考虑：能否优化程序，取决于
+	锁的开销
+	创建对象的开销
+	两个开销，哪个更大
+*/
 type ReusableObj struct {
 }
 type ObjPool struct {

@@ -1,4 +1,4 @@
-package model
+package modes
 
 /*
 	函数式编程：https://time.geekbang.com/column/article/330232?utm_source=pc_cp&utm_term=pc_interstitial_1346

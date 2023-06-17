@@ -3,34 +3,20 @@ package performance
 import (
 	"math/rand"
 	"os"
+	"runtime"
 	"runtime/pprof"
 	"testing"
 	"time"
 )
 
-/*
-通过文件方式输出 Profile
-
-	灵活性高，适用于特定代码段的分析
-	通过手动调用 runtime/pprof 的 API
-	API相关文档 https://studygolang.com/static/pkgdoc/pkg/runtime_pprof.htm
-	$ go tool pprof [binary][binary.prof]
-		[binary]：二进制
-		[binary.prof]：要查看的 prof
-
-Go 支持的多种 Profile
-
-	go help testflag
-	https://go.dev/src/runtime/pprof/pprof.go
-*/
 func TestProfile(t *testing.T) {
 	// 创建输出文件
-	f, err := os.Create("prof_test.prof")
+	f, err := os.Create("prof/cpu.prof")
 	if err != nil {
 		t.Fatal("could not create test profile:", err)
 	}
 	// 获取系统信息
-	if err = pprof.StartCPUProfile(f); err != nil {
+	if err = pprof.StartCPUProfile(f); err != nil { // 监控 CPU
 		t.Fatal("could not start CPU profile:", err)
 	}
 	defer pprof.StopCPUProfile()
@@ -40,22 +26,22 @@ func TestProfile(t *testing.T) {
 	fillMatrix(&x)
 	calculate(&x)
 
-	f1, err := os.Create("mem.prof")
-	//runtime.GC()	// GC，获取最新的数据信息
+	f1, err := os.Create("prof/memory.prof")
 	defer f1.Close()
 	if err != nil {
 		t.Fatal("could not create memory profile:", err)
 	}
-	if err = pprof.WriteHeapProfile(f1); err != nil {
+	runtime.GC()                                      // GC，获取最新的数据信息
+	if err = pprof.WriteHeapProfile(f1); err != nil { // 写入内存信息
 		t.Fatal("could not write memory profile:", err)
 	}
 
-	f2, err := os.Create("goroutine.prof")
+	f2, err := os.Create("prof/goroutine.prof")
 	defer f2.Close()
 	if err != nil {
 		t.Fatal("could not create goroutine profile:", err)
 	}
-	if gProf := pprof.Lookup("goroutine"); gProf == nil {
+	if gProf := pprof.Lookup("goroutine"); gProf == nil { // 协程：pprof.Lookup("goroutine")
 		t.Log("could not write goroutine profile:")
 	} else {
 		gProf.WriteTo(f2, 0)

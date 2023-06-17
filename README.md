@@ -1,6 +1,7 @@
 # Golang Language
+The master has failed more times than the beginner has tried.
 
-## 面试：
+##### 强烈推荐：https://github.com/easierway/service_decorators/blob/master/README.md
 ### 基础：
 ### 并发编程：
 ### Runtime：
@@ -14,7 +15,7 @@
 ### 消息队列：
 ### 分布式：
 
-## Books：
+# Books：
 ### Go程序设计语言
     Go语言编程唯一推荐书籍
 ### 面向模式的软件架构

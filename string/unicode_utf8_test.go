@@ -8,10 +8,13 @@ import (
 
 /*
 string
+
 	1.string是数据类型，不是引用/指针类型，默认值是空字符串，而不是 nil
 	2.string是只读的byte slice，len函数返回它所包含的byte数
 	3.string的byte数组可以存放任何数据
+
 Unicode UTF8
+
 	1.Unicode是一种字符集（code point）
 	2.UTF8是Unicode的存储实现（转换为字节序列的规则）
 */

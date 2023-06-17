@@ -1,4 +1,4 @@
-package model
+package modes
 
 /*
 Go语言反射机制

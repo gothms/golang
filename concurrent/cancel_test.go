@@ -1,4 +1,4 @@
-package advanced
+package concurrent
 
 import (
 	"fmt"
