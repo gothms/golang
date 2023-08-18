@@ -27,7 +27,8 @@ gopath：直接手动在 %GOPATH% 创建即可(不要\go)
 	mkdir %USERPROFILE%\go\pkg
 	mkdir %USERPROFILE%\go\src
 
-$GOPATH\bin\go-torch.exe 全路径示例
+全路径示例
+	$GOPATH\bin\go-torch.exe
 	E:\gothmslee\bin\go-torch.exe
 参考
 	https://juejin.cn/post/7044908192882524196

@@ -19,6 +19,7 @@ Is Go an object-oriented language?
 	不是继承，不支持方法的重载，不支持LSP
 	变量是什么类型，就优先调用该类型的方法
 */
+
 type IntConv func(op int) int
 
 func TestStruct(t *testing.T) {

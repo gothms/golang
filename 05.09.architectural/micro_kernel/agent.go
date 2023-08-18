@@ -8,7 +8,6 @@ import (
 	"sync"
 )
 
-// var _ Collector = (*Agent)(nil)
 var WrongStateError = errors.New("can not take the operation in the current state")
 
 type State int
@@ -128,8 +127,22 @@ func (agt *Agent) destroyCollectors() error {
 	return errs
 }
 
-//func (agt *Agent) Init(evtRcv EventReceiver) error {
+//var _ Collector = (*Agent)(nil)
 //
+//func (agt *Agent) Init(evtRcv EventReceiver) error {
+//	//TODO implement me
+//	return nil
+//}
+//
+//func (agt *Agent) Start(ctx context.Context) error {
+//	//fmt.Println("start", agt.state)
+//	if agt.state != Waiting {
+//		return WrongStateError
+//	}
+//	agt.state = Running
+//	agt.ctx, agt.cancel = context.WithCancel(context.Background())
+//	go agt.EventProcessGoroutine()
+//	return agt.startCollectors()
 //}
 
 func (agt *Agent) Start() error {

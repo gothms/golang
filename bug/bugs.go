@@ -5,6 +5,7 @@ go mod 飘红：
 	解决：
 	File->Settings...->Go->Go Modules->勾选Enable Go modules integration
 		Environment(也可填入 GOPROXY=https://goproxy.io)
+	也可能 GOROOT 没设置正确
 $GOPATH/go.mod exists but should not：报错
 	解决：手动生成 go.mod，并手动添加版本号，如 go 1.20
 easayjson：easy_json.go
@@ -57,6 +58,5 @@ Debug
 
 	下载低版本也未解决问题：
 	go get github.com/go-delve/delve/cmd/dlv@v1.8.3
-GDB
 
 */

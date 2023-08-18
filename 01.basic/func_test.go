@@ -14,6 +14,7 @@ import (
 
 functional programming：计算机程序的构造和解释
 */
+
 func TestFn(t *testing.T) {
 	sf := timeSpent(slowFunc)
 	t.Log(sf(10))

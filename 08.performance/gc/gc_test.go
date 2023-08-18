@@ -9,11 +9,9 @@ import (
 
 /*
 Go GC
-
 	采用染色标记的 GC，和 Java 相当不同
 
 避免内存分配和复制
-
 	1.复杂对象尽量传递引用
 		数组的传递
 		结构体的传递
@@ -26,7 +24,6 @@ Go GC
 		复用内存
 
 打开 GC 日志
-
 	windows：
 		set GOGCTRACE=1
 		set GODEBUG=gctrace=1
@@ -41,7 +38,6 @@ Go GC
 			也可以查 YouTube/Google 视频
 
 Go tool trace
-
 	普通程序输出 trace 信息
 		err := trace.Start(file)
 		defer trace.Stop()
@@ -55,6 +51,7 @@ Go tool trace
 		我的 Chrome 报错：
 		Trace Viewer is running with WebComponentsV0 polyfill, and some features may be broken. As a workaround, you may try running chrome with "--enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports" flag. See crbug.com/1036492.
 */
+
 // 普通程序输出 trace 信息
 func TestTrace(t *testing.T) {
 	f, err := os.Create("trace_test.out")

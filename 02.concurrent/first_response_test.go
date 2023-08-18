@@ -18,6 +18,7 @@ import (
 	1.可以使用 sync.WaitGroup
 	2.这里使用 CSP
 */
+
 // 所有任务完成 CSP
 func AllResponse() string {
 	numOfRunner := 10
@@ -30,7 +31,7 @@ func AllResponse() string {
 	}
 	var sb strings.Builder
 	for i := 0; i < numOfRunner; i++ {
-		sb.WriteString(<-ch)
+		sb.WriteString(<-ch) // 完成一个，读一个
 		//sb.WriteRune('\n')
 	}
 	return sb.String()
@@ -49,8 +50,8 @@ func runTask(id int) string {
 }
 func FirstResponse() string {
 	numOfRunner := 10
-	//ch := make(chan string)	// 无缓冲
-	ch := make(chan string, numOfRunner) // 缓冲区大小 = 协程数
+	ch := make(chan string) // 无缓冲
+	//ch := make(chan string, numOfRunner) // 缓冲区大小 = 协程数
 	for i := 0; i < numOfRunner; i++ {
 		go func(i int) {
 			ret := runTask(i)

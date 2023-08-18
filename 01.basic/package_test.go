@@ -9,41 +9,35 @@ import (
 
 /*
 package
-
 	1.基本复用模块单元
 		以首字母大写来表明可被包外代码访问
 	2.代码的package可以和所在的目录不一致
 	3.同一目录里的Go文件的package要保持一致
 
 1.包的引用
-
 	项目的目录（或上级某个目录）加到 GOPATH
 	import "项目名/包名"：$GOPATH$/项目名/包名...
 
 2.init方法
-
 	在main被执行前，所有依赖的package的 init 方法都会被执行
 	不同包的 init 函数按照包导入的依赖关系决定执行顺序
 	每个包可以有多个 init 函数
 	包的每个源文件也可以有多个 init 函数，这点比较特殊
 
 3.远程包的引用
-
 	引入：go get -u github.com/easierway/concurrent_map
 		-u：强制从网络更新远程依赖
 	使用：
 		导入&别名：import cm "github.com/easierway/concurrent_map"
 	HTTPS：https://github.com/easierway/concurrent_map.git
 		注意代码在 GitHub 上的组织形式，以适应 go get
-			直接以代码路径开始，不要有 src（即不要提交 src 目录）
+		直接以代码路径开始，不要有 src（即不要提交 src 目录）
 
 4.Go未解决的依赖问题
-
 	同一环境下，不同项目使用同一包的不同版本
 	无法管理对包的特定版本的依赖
 
 5.vendor路径
-
 	Go 1.5 release 版本中，vendor目录被添加到除了 GOPATH 和 GOROOT 之外的依赖目录查找的解决方案
 	在1.6之前，需要手动设置环境变量
 
@@ -54,13 +48,11 @@ package
 	4.在 GOROOT 目录下查找
 
 6.常用的依赖管理工具
-
 	godep：https://github.com/tools/godep
 	glide：https://github.com/Masterminds/glide
 	dep：https://github.com/golang/dep
 
 7.glide 的使用
-
 	参考：https://cloud.tencent.com/developer/article/1683153
 
 	1.安装glide：go get github.com/Masterminds/glide
@@ -100,7 +92,6 @@ package
 		https://zhuanlan.zhihu.com/p/27994151
 
 一个完整的 glide.yaml
-
 	package: foor
 	homepage: https://github.com/qiangmzsx
 	license: MIT
@@ -129,6 +120,7 @@ package
 	  subpackages:
 	  - convey
 */
+
 func TestConcurrentMap(t *testing.T) {
 	m := cm.CreateConcurrentMap(99)
 	m.Set(cm.StrKey("key"), 10)

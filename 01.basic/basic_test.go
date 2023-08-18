@@ -18,6 +18,7 @@ main：
 2.指针不支持任何运算
 3.string是数据类型，不是引用/指针类型，默认值是空字符串，而不是 nil
 */
+
 func TestConst(t *testing.T) {
 	t.Log(Day8)
 	admin := 7
