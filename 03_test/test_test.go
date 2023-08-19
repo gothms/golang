@@ -1,4 +1,4 @@
-package test_test
+package _03_test
 
 import (
 	"os"

@@ -1,5 +1,5 @@
-package _3_test
+package _03
 
-func square(i int) int {
+func Square(i int) int {
 	return i * i
 }
