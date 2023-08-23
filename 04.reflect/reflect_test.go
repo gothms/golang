@@ -9,11 +9,10 @@ import (
 
 /*
 reflect.TypeOf vs reflect.ValueOf
-
 	1.reflect.TypeOf 返回类型 (reflect.Type)
 	2.reflect.ValueOf 返回值 (reflect.Value)
 	3.可以从 reflect.Value 获得类型
-	4.通过 kind 来判断类型
+	4.通过 kind 来判断类型（27种）
 		const (
 			Invalid Kind = iota
 			Bool
@@ -23,9 +22,8 @@ reflect.TypeOf vs reflect.ValueOf
 		)
 
 利用反射编写灵活的代码
-
-	按名字访问结构的成员：*e 为结构体
-		reflect.ValueOf(*e).FieldByName("Name")
+	按名字访问结构的成员：e 为结构体
+		reflect.ValueOf(e).FieldByName("Name")
 	按名字访问结构的方法：e 为结构体指针
 		reflect.ValueOf(e).MethodByName("UpdateAge").
 			Call([]reflect.Value{reflect.ValueOf(1)})
@@ -48,7 +46,9 @@ struct Tag
 		性能大大降低
 	Elem()：获取指针指向的值
 */
-// 万能程序
+
+// 万能程序：反序列化
+
 func TestFillField(t *testing.T) {
 	set := map[string]interface{}{"Name": "Mike", "Age": 18}
 	e := Employee{}
@@ -113,10 +113,11 @@ func TestInvokeByName(t *testing.T) {
 	t.Logf("Name: value(%[1]v),type(%[1]T)", reflect.ValueOf(e).FieldByName("Name"))
 	if name, ok := reflect.TypeOf(e).FieldByName("Name"); ok {
 		t.Log("TypeOf:name", name)                   // TypeOf:name {Name  string format:"normal" 16 [1] false}
-		t.Log("Tag->format", name.Tag.Get("format")) // struct Tag
+		t.Log("Tag->format", name.Tag.Get("format")) // struct Tag: Tag->format normal
 	} else {
 		t.Error(`failed to get "Name" field`)
 	}
+	// 反射修改 Age
 	reflect.ValueOf(&e).MethodByName("UpdateAge").
 		Call([]reflect.Value{reflect.ValueOf(1)})
 	t.Log("Updated Age:", e)
@@ -128,6 +129,11 @@ func TestTypeAndValue(t *testing.T) {
 	t.Log(reflect.TypeOf(f), reflect.ValueOf(f))
 	t.Log(reflect.ValueOf(f).Type())
 }
+func TestBasicType(t *testing.T) {
+	var f float64 = 3.2
+	CheckType(f)
+	CheckType(&f) // *float64
+}
 func CheckType(v interface{}) {
 	t := reflect.TypeOf(v)
 	switch t.Kind() {
@@ -138,9 +144,4 @@ func CheckType(v interface{}) {
 	default:
 		fmt.Println("Unknown", t)
 	}
-}
-func TestBasicType(t *testing.T) {
-	var f float64 = 3.2
-	CheckType(f)
-	CheckType(&f) // *float64
 }
