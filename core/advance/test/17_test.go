@@ -5,6 +5,12 @@ import (
 	"testing"
 )
 
-func TestGoroutineTest(t *testing.T) {
-	advance.GoroutineTest()
+func TestGoroutineTest1(t *testing.T) {
+	advance.GoroutineTest1()
+}
+func TestGoroutineTest2(t *testing.T) {
+	advance.GoroutineTest2()
+}
+func TestGoroutineSync(t *testing.T) {
+	advance.GoroutineSync()
 }
