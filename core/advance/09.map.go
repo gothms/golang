@@ -88,6 +88,7 @@ A
 	判断一个操作是否是原子的可以使用 go run race 命令做数据的竞争检测
 
 补充：CGO_ENABLED=1
+	官方文档：https://pkg.go.dev/cmd/cgo
 	go run -race map.go
 	报错
 		go: -race requires cgo; enable cgo by setting CGO_ENABLED=1
@@ -99,6 +100,9 @@ A
 	解决
 		https://blog.51cto.com/u_15274085/2918704
 		下载地址：https://sourceforge.net/projects/mingw-w64/files/mingw-w64/
+	ps：目前只能这样ugly的解决
+	Windows
+		CGO_ENABLED=0 GOOS=windows  GOARCH=amd64  go build main.go
 */
 
 // MapTest -race

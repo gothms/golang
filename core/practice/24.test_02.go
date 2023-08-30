@@ -101,4 +101,6 @@ command
 		go test -bench="." golang/core/practice/test
 		go test -bench="." 24_test.go
 		go test -bench=BenchmarkStringBuilder golang/core/practice/test
+参考
+	https://juejin.cn/post/7131966825474031646
 */
