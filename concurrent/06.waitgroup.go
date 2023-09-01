@@ -273,6 +273,3 @@ func WGCounterMain() {
 	wg.Wait()                          // 阻塞：检查点，等待goroutine都完成任务
 	fmt.Println(wgCounter.WGCounter()) // 输出当前计数器的值
 }
-func a() {
-
-}

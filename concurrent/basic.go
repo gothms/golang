@@ -25,8 +25,26 @@ package concurrent
 	go-tools
 		死锁检测工具
 		https://github.com/dominikh/go-tools
-
-
-
+	Hugo
+		著名的静态网站生成工具
+	vitess
+		YouTube 开源的知名项目 vitess 中提供了 bucketpool 的实现，它提供了更加通用的多层 buffer 池
+	bytebufferpool
+		fasthttp 作者 valyala 提供的一个 buffer 池，基本功能和 sync.Pool 相同
+		底层也是使用 sync.Pool 实现的，包括会检测最大的 buffer，超过最大尺寸的 buffer，就会被丢弃。提供了校准机制
+	oxtoacart/bpool
+		保持池子中元素的数量，一旦 Put 的数量多于它的阈值，就会自动丢弃，而 sync.Pool 是一个没有限制的池子，只要 Put 就会收进去
+		基于 Channel 实现
+	fatih/pool
+		最常用的一个 TCP 连接池
+	gomemcache
+		Brad Fitzpatrick 是知名缓存库 Memcached 的原作者，前 Go 团队成员
+		gomemcache 是他使用 Go 开发的 Memchaced 的客户端，其中也用了连接池的方式池化 Memcached 的连接
+	fasthttp
+		fasthttp 中的 Worker Pool，TCP 连接池实现
+		ps：Worker Pool 推荐
+			gammazero/workerpool
+			ivpusic/grpool
+			dpaks/goworkers
 
 */

@@ -1,5 +1,7 @@
 package concurrent
 
+import "context"
+
 /*
 
 
@@ -49,3 +51,7 @@ package concurrent
 
 
  */
+
+func a() {
+	context.Context()
+}

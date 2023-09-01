@@ -205,6 +205,8 @@ race detector
 				查看计数器例子的代码，重点关注一下 count++ 前后的编译后的代码
 				在编译的代码中，增加了 runtime.racefuncenter、runtime.raceread、runtime.racewrite、runtime.racefuncexit 等检测 data race 的方法
 				通过这些插入的指令，Go race detector 工具就能够成功地检测出 data race 问题了
+			参见
+				如 runtime/race.go 中，runtime.racefuncexit
 		data race 工具的实现机制
 			通过在编译的时候插入一些指令，在运行时通过这些插入的指令检测并发读写从而发现 data race 问题
 
