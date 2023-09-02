@@ -1,6 +1,9 @@
 package concurrent
 
 /*
+源码阅读工具
+	https://mp.weixin.qq.com/s/E2TL_kcbVcRJ0CnxwbXWLw
+
 拷贝
 	sync 包的同步原语在使用后不能复制
 	“不能”作为参数传递
@@ -8,6 +11,9 @@ package concurrent
 	Mutex
 	RWMutex
 	WaitGroup：可重用
+
+必须初始化
+	Channel
 
 工具
 	-race
@@ -46,5 +52,20 @@ package concurrent
 			gammazero/workerpool
 			ivpusic/grpool
 			dpaks/goworkers
+	uber-go/atomic
+		定义和封装了几种与常见类型相对应的原子操作类型，这些类型提供了原子操作的方法
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 */
