@@ -1,8 +1,8 @@
 package concurrent
 
 /*
-代码整理
-	https://github.com/wuqinqiang/Go_Concurrency/tree/main
+项目地址
+	https://github.com/smallnest/dive-to-gosync-workshop/tree/master
 1-11
 	基本并发原语
 	互斥锁Mutex、读写锁RWMutex

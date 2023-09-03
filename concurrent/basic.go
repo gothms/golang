@@ -54,9 +54,8 @@ package concurrent
 			dpaks/goworkers
 	uber-go/atomic
 		定义和封装了几种与常见类型相对应的原子操作类型，这些类型提供了原子操作的方法
-
-
-
+	marusama/semaphore
+		实现了一个可以动态更改资源容量的信号量，也是一个非常有特色的实现
 
 
 

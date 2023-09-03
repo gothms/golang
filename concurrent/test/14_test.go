@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+func TestMapChanReduce(t *testing.T) {
+	concurrent.MapChanReduce()
+}
 func TestOrDone(t *testing.T) {
 	sig := func(after time.Duration) <-chan interface{} {
 		c := make(chan interface{})
@@ -34,4 +37,19 @@ func TestChannelMutexDemo(t *testing.T) {
 }
 func TestChannelReflectSelect(t *testing.T) {
 	concurrent.ChannelReflectSelect()
+}
+
+func TestFanOut(t *testing.T) {
+	ch := make(chan int, 1)
+	defer close(ch)
+	ch <- 1
+	go func() {
+		time.Sleep(time.Second)
+		ch <- 2 // 注意：panic: send on closed channel
+	}()
+	time.Sleep(time.Millisecond * 200)
+	v := <-ch
+	fmt.Println(v)
+	//v = <-ch
+	//fmt.Println(v)
 }
