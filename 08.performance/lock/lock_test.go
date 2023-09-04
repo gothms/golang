@@ -8,7 +8,6 @@ import (
 
 /*
 1.锁：别让性能被 “锁” 住
-
 	很多程序的性能问题，都是由锁导致
 
 	误区：sync.RWMutex
@@ -21,7 +20,6 @@ import (
 		RLock 和 RUnlock 都用了近 3s，但也是作为参考
 
 2.sync.Map：Go 内置
-
 	2.1.适合读多写少，且 key 相对稳定的环境
 	2.2.采用了空间换时间的方案，并且采用指针的方式间接实现值的映射，所以存储空间会较 built-in map 大
 		Read Only：R区域
@@ -29,14 +27,14 @@ import (
 	2.3.参考：https://my.oschina.net/qiangmzsx/blog/1827059
 
 3.ConcurrentMap：源自 Java
-
 	partition 原理
 	适用于读写都很频繁的情况
+	推荐
+		https://github.com/easierway/concurrent_map
+	星数更多
+		https://github.com/orcaman/concurrent-map
 
-	https://github.com/easierway/concurrent_map
-
-3.总结
-
+4.总结
 	3.1.减少锁的影响范围
 	3.2.减少发生锁冲突的概率
 		sync.Map：读很多，写很少
@@ -45,6 +43,7 @@ import (
 		LAMX Disruptor：https://martinfowler.com/articles/lmax.html
 		lock free 非常高性能的数据交换的队列，可以在一台普通的 linepop？上实现百万 QPS
 */
+
 const (
 	NumOfReader = 40
 	ReadTimes   = 100000

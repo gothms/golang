@@ -11,9 +11,9 @@ import (
 3.Example：示例测试
 4.子测试
 5.Main测试
-
 	TestMain 用于主动执行各种测试，可以测试前后做setup和tear-down操作
 */
+
 func TestTest(t *testing.T) {
 	a, b := 1, 2
 	a, b = b, a

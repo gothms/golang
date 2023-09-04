@@ -10,7 +10,6 @@ import (
 
 /*
 unsafe.Pointer 实际使用场景
-
 	和外部 C 程序实现的高效的库，交互的时候
 	其他使用场景比较少
 	适用总结：
@@ -18,7 +17,6 @@ unsafe.Pointer 实际使用场景
 		某些地方要用 C 程序来追求更高性能
 
 “不安全”行为的危险性
-
 	Go不支持强制类型转换
 	unsafe.Pointer 可以把持有的指针，转换为任意类型的指针
 		i := 10
@@ -31,6 +29,7 @@ unsafe.Pointer 实际使用场景
 		2.写完后，用原子操作把读和写的地方，重新指向新的地方
 		3.再读时，就会读到这块新写好的地方
 */
+
 // 原子类型操作
 func TestAtomic(t *testing.T) {
 	var shareBufPtr unsafe.Pointer

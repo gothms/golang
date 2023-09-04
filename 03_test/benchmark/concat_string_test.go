@@ -78,4 +78,5 @@ func BenchmarkConcatStringByBuilder(b *testing.B) {
 			sb.WriteString(s)
 		}
 	}
+	b.StopTimer()
 }

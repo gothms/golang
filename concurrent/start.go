@@ -3,6 +3,7 @@ package concurrent
 /*
 项目地址
 	https://github.com/smallnest/dive-to-gosync-workshop/tree/master
+	https://github.com/smallnest/go-concurrent-quiz
 1-11
 	基本并发原语
 	互斥锁Mutex、读写锁RWMutex

@@ -2,18 +2,15 @@ package bug
 
 /*
 go mod 飘红：
-
 	解决：
 	File->Settings...->Go->Go Modules->勾选Enable Go modules integration
 		Environment(也可填入 GOPROXY=https://goproxy.io)
 	也可能 GOROOT 没设置正确
 
 $GOPATH/go.mod exists but should not：报错
-
 	解决：手动生成 go.mod，并手动添加版本号，如 go 1.20
 
 easayjson：easy_json.go
-
 	描述：不能使用命令
 		$ goconvey
 		$ easayjson -all <file>.go
@@ -33,13 +30,11 @@ easayjson：easy_json.go
 		解决：删除 vendor
 
 goconvey：bdd_test.go
-
 	$ goconvey
 	报错：goconvey : 无法将“goconvey”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正确，然后再试一次。
 	解决：不使用 glide 时，可在 $GOPATH$\bin 目录下生成 goconvey.exe
 
 glide：package_test.go
-
 	1.glide install 报错
 		[WARN]  Unable to checkout golang/utils
 		[ERROR] Update failed for golang/utils: Cannot detect VCS
@@ -53,13 +48,11 @@ glide：package_test.go
 		参考：https://coder55.com/article/46327
 
 未解决问题：
-
 	1.glide
 	2.GODEBUG=gctrace=1 go test -bench="."
 		以及 Chrome 报错
 
 Debug
-
 	描述：断点 Debug 时不能正常 debug，且
 		跳入 asm_amd64.s 中
 		跳入 proc.go 中
@@ -71,4 +64,7 @@ Debug
 
 	下载低版本也未解决问题：
 	go get github.com/go-delve/delve/cmd/dlv@v1.8.3
+
+不同操作系统的API
+	//go:build linux
 */

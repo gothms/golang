@@ -1,4 +1,4 @@
-package basic
+package _1_basic
 
 /*
 Go的错误机制：与其他主要编程语言的差异

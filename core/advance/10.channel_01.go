@@ -110,7 +110,3 @@ Don’t communicate by sharing memory; share memory by communicating.
 补充
 	channel 底层存储结构是循环链表
 */
-
-func Channel() {
-	//ch := make(chan int, 2)
-}

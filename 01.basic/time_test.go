@@ -1,4 +1,4 @@
-package basic
+package _1_basic
 
 /*
 1.time.Time 和 time.Duration

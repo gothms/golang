@@ -1,4 +1,4 @@
-package basic
+package _1_basic
 
 /*
 Map与工厂模式
