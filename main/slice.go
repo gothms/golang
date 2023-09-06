@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"unsafe"
+)
 
 func main() {
 	arr := [3]int{}
@@ -29,4 +32,8 @@ func main() {
 
 	fmt.Println(32 * 1024)
 	fmt.Println(2 << 10)
+
+	var i int32
+	size := unsafe.Sizeof(i)
+	fmt.Println(size)
 }
