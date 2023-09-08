@@ -2,7 +2,6 @@ package performance
 
 /*
 通过文件方式输出 Profile
-
 	灵活性高，适用于特定代码段的分析
 	通过手动调用 runtime/pprof 的 API
 	API相关文档 https://studygolang.com/static/pkgdoc/pkg/runtime_pprof.htm
@@ -11,7 +10,6 @@ package performance
 		[binary.prof]：要查看的 prof
 
 测试：Go 内置了 runtime/pprof 包
-
 	CPU
 	程序堆
 	Goroutine：pprof.Lookup("goroutine")
@@ -23,7 +21,6 @@ package performance
 		f, err := os.Create("prof/cpu.prof")
 
 查看：$ go tool pprof prof cpu.prof：prof 不是指路径
-
 	top：查看 top 的情况
 		 flat  flat%   sum%        cum   cum%
 		 440ms 44.00% 44.00%      540ms 54.00%  math/rand.(*Rand).Int31n

@@ -131,6 +131,7 @@ sync.Map 的实现
 			如果 dirty 字段非 nil 的话，map 的 read 字段和 dirty 字段会包含相同的非 expunged 的项
 			所以如果通过 read 字段更改了这个项的值，从 dirty 字段中也会读取到这个项的新值
 			因为本来它们指向的就是同一个地址
+			即底层数据存储的是指针，指向的是同一份值
 		dirty 包含重复项目的好处就是
 			一旦 miss 数达到阈值需要将 dirty 提升为 read 的话，只需简单地把 dirty 设置为 read 对象即可
 		不好的一点就是
@@ -166,6 +167,7 @@ Len 方法
 	sync.map 还有一些 LoadAndDelete、LoadOrStore、Range 等辅助方法
 	但是没有 Len 这样查询 sync.Map 的包含项目数量的方法，并且官方也不准备提供
 	如果你想得到 sync.Map 的项目数量的话，你可能不得不通过 Range 逐个计数
+	为什么没有 Len 方法：https://link.zhihu.com/?target=https%3A//github.com/golang/go/issues/20680
 
 总结
 	Go map 三种实现
@@ -181,6 +183,9 @@ Len 方法
 思考
 	1.为什么 sync.Map 中的集合核心方法的实现中，如果 read 中项目不存在，加锁后还要双检查，再检查一次 read？
 	2.你看到 sync.map 元素删除的时候只是把它的值设置为 nil，那么什么时候这个 key 才会真正从 map 对象中删除？
+
+参考
+	https://zhuanlan.zhihu.com/p/344834329
 */
 
 func MapNilValue() {

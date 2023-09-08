@@ -2,8 +2,19 @@ package test
 
 import (
 	"golang/concurrent"
+	"sync"
 	"testing"
 )
+
+func TestSyncMap(t *testing.T) {
+	var m sync.Map
+	m.Store(1, 2)
+	d, ok := m.LoadAndDelete(1)
+	t.Log(d, ok)
+	m.Store(1, 3)
+	value, ok := m.Load(1)
+	t.Log(value, ok)
+}
 
 func TestMap(t *testing.T) {
 	concurrent.MapNilValue()

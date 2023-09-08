@@ -10,11 +10,23 @@ func main() {
 		1: "haha",
 	}
 
-	go read(m)
-	time.Sleep(time.Second)
-	go write(m)
-	time.Sleep(30 * time.Second)
-	fmt.Println(m)
+	//go read(m)
+	//time.Sleep(time.Second)
+	//go write(m)
+	//time.Sleep(30 * time.Second)
+	//fmt.Println(m)
+
+	//go func() {
+	//	for i := 0; i < 10000; i++ {
+	//		m[i] = fmt.Sprintf("put_%d", i)
+	//	}
+	//}()
+	for i := 0; i < 10000; i++ {
+		m[i] = fmt.Sprintf("put_%d", i)
+	}
+	for k, v := range m {
+		fmt.Println(k, v)
+	}
 }
 
 func read(m map[int]string) {
