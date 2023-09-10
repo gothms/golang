@@ -3,7 +3,9 @@ package concurrent
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
+	"unsafe"
 )
 
 /*
@@ -16,7 +18,7 @@ WaitGroup：协同等待，任务编排利器
 	如果在执行任务的这些 goroutine 还没全部完成，那么 goroutine A 就会阻塞在检查点
 	直到所有 goroutine 都完成后才能继续执行
 需求场景
-	们要完成一个大的任务，需要使用并行的 goroutine 执行三个小任务，只有这三个小任务都完成，我们才能去执行后面的任务
+	我们要完成一个大的任务，需要使用并行的 goroutine 执行三个小任务，只有这三个小任务都完成，我们才能去执行后面的任务
 	如果通过轮询的方式定时询问三个小任务是否完成，会存在两个问题：
 	一是，性能比较低，因为三个小任务可能早就完成了，却要等很长时间才被轮询到
 	二是，会有很多无谓的轮询，空耗 CPU 资源
@@ -48,7 +50,8 @@ WaitGroup 的实现
 	数据结构
 		它包括了一个 noCopy 的辅助字段，一个 state1 记录 WaitGroup 状态的数组
 		noCopy 辅助字段：主要就是辅助 vet 工具检查是否通过 copy 赋值这个 WaitGroup 实例
-		state1：一个具有复合意义的字段，包含 WaitGroup 的计数、阻塞在检查点的 waiter 数和信号量
+		state1：一个具有复合意义的字段，包含 WaitGroup 的计数、阻塞在检查点的 waiter 数
+		sema  uint32：信号量
 	WaitGroup 的数据结构定义以及 state 信息的获取方法
 		因为对 64 位整数的原子操作要求整数的地址是 64 位对齐的，所以针对 64 位和 32 位环境的 state 字段的组成是不一样的
 		在 64 位环境下，state1 的第一个元素是 waiter 数，第二个元素是 WaitGroup 的计数值，第三个元素是信号量
@@ -124,7 +127,7 @@ WaitGroup 的实现
 noCopy：辅助 vet 检查
 	作用
 		指示 vet 工具在做检查的时候，这个数据结构不能做值复制使用
-		更严谨地说，是不能在第一次使用之后复制使用 ( must not be copied after first use)
+		更严谨地说，是不能在第一次使用之后复制使用(must not be copied after first use)
 		重要的是，noCopy 是一个通用的计数技术，其他并发原语中也会用到
 	vet
 		vet 会对实现 Locker 接口的数据类型做静态检查，一旦代码中有复制使用这种数据类型的情况，就会发出警告
@@ -142,7 +145,7 @@ noCopy：辅助 vet 检查
 		就可以通过嵌入 noCopy 这个数据类型来实现
 
 流行的 Go 开发项目中的坑
-	有网友在 Go 的 issue 28123中提了例子
+	有网友在 Go 的 issue 28123中提了例子
 		示例 WaitGroupBug & TestWaitGroupBug
 		分析
 			代码最大的一个问题，就是 copy 了 WaitGroup 的实例 w
@@ -172,6 +175,18 @@ noCopy：辅助 vet 检查
 	通常我们可以把 WaitGroup 的计数值，理解为等待要完成的 waiter 的数量
 	你可以试着扩展下 WaitGroup，来查询 WaitGroup 的当前的计数值吗？
 */
+
+// WaitGroup ==========查询 WaitGroup 计数值==========
+type WaitGroup struct {
+	sync.WaitGroup
+}
+
+func (wg *WaitGroup) GetWaitGroupCount() (int32, uint32) {
+	state := atomic.LoadUint64((*uint64)(unsafe.Pointer(&wg.WaitGroup)))
+	v := int32(state >> 32)
+	w := uint32(state)
+	return v, w
+}
 
 // TestWGStruct ==========copy bug==========
 type TestWGStruct struct {

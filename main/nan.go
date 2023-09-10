@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/bits"
 )
 
 func main() {
@@ -15,4 +16,11 @@ func main() {
 	h[key] = 123
 	v := h[key]
 	fmt.Println(v)
+
+	var state int32 = 1
+	fmt.Println(state << 30)
+	fmt.Printf("%b, %d\n", state<<30, bits.Len32(uint32(state<<30)))
+	fmt.Println(state<<31 - 1)
+	fmt.Println((state<<31 - 1) >> 3)
+	fmt.Println(state << 32)
 }

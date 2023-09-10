@@ -64,10 +64,10 @@ func (wg *WaitGroup) Add(delta int) {
 	if v < 0 { // 计数器设置为负值
 		panic("sync: negative WaitGroup counter")
 	}
-	if w != 0 && delta > 0 && v == int32(delta) {
-		panic("sync: WaitGroup misuse: Add called concurrently with Wait")
+	if w != 0 && delta > 0 && v == int32(delta) { // 先 Wait，后 Add，则 panic（但是 Wait 有 'if v == 0' 的判断）
+		panic("sync: WaitGroup misuse: Add called concurrently with Wait") // 没测试到
 	}
-	if v > 0 || w == 0 {
+	if v > 0 || w == 0 { // 否则 v == 0 && w > 0
 		return
 	}
 	// This goroutine has set counter to 0 when waiters > 0.
@@ -75,7 +75,7 @@ func (wg *WaitGroup) Add(delta int) {
 	// - Adds must not happen concurrently with Wait,
 	// - Wait does not increment waiters if it sees counter == 0.
 	// Still do a cheap sanity check to detect WaitGroup misuse.
-	if wg.state.Load() != state {
+	if wg.state.Load() != state { // state 值已被修改
 		panic("sync: WaitGroup misuse: Add called concurrently with Wait")
 	}
 	// Reset waiters count to 0.
@@ -120,7 +120,7 @@ func (wg *WaitGroup) Wait() {
 				race.Write(unsafe.Pointer(&wg.sema))
 			}
 			runtime_Semacquire(&wg.sema) // 阻塞休眠等待
-			if wg.state.Load() != 0 {
+			if wg.state.Load() != 0 {    // state 值已被修改
 				panic("sync: WaitGroup is reused before previous Wait has returned")
 			}
 			if race.Enabled {
@@ -132,6 +132,7 @@ func (wg *WaitGroup) Wait() {
 	}
 }
 
+// state_ 示例
 // WaitGroup 的数据结构定义以及得到 state 的地址和信号量的地址
 func (wg *WaitGroup) state_() (statep *uint64, semap *uint32) {
 	if uintptr(unsafe.Pointer(&wg.state1))%8 == 0 { // 64 位

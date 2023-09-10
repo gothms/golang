@@ -48,6 +48,7 @@ const (
 	mutexWoken                   // 唤醒标记
 	mutexStarving                // 从state字段中分出一个饥饿标记
 	mutexWaiterShift = iota      // 阻塞等待的 waiter 数量
+	// waiter 最大值 = 2^28 - 1 = 268435455
 
 	// Mutex fairness.
 	//
@@ -131,7 +132,7 @@ func (m *Mutex) lockSlow() {
 			// Try to set mutexWoken flag to inform Unlock
 			// to not wake other blocked goroutines.
 			if !awoke && old&mutexWoken == 0 && old>>mutexWaiterShift != 0 &&
-				atomic.CompareAndSwapInt32(&m.state, old, old|mutexWoken) {
+				atomic.CompareAndSwapInt32(&m.state, old, old|mutexWoken) { // 新来的 goroutine 会标记唤醒状态
 				awoke = true
 			}
 			runtime_doSpin()
@@ -144,7 +145,7 @@ func (m *Mutex) lockSlow() {
 		if old&mutexStarving == 0 {
 			new |= mutexLocked // 非饥饿状态下抢锁，把state最低位置为加锁状态，后续 CAS 操作如果成功就可能获取到了锁
 		}
-		if old&(mutexLocked|mutexStarving) != 0 { // 如果锁已经被持有或者锁处于饥饿状态，最好的归宿就是等待
+		if old&(mutexLocked|mutexStarving) != 0 { // 如果锁已经被持有或者锁处于饥饿状态，最好的归宿就是等待（抢锁也是等待）
 			new += 1 << mutexWaiterShift // waiter数量加 1
 		}
 		// The current goroutine switches mutex to starvation mode.

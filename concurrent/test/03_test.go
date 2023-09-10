@@ -75,8 +75,9 @@ func TestRecursiveMutex(t *testing.T) {
 // TestGetGoId 通过 runtime.Stack 获取 goroutine id
 func TestGetGoId(t *testing.T) {
 	var buf [64]byte
-	n := runtime.Stack(buf[:], false)
+	n := runtime.Stack(buf[:], true)
 	// 得到id字符串
+	t.Log(string(buf[:]))
 	idField := strings.Fields(strings.TrimPrefix(string(buf[:n]), "goroutine "))
 	t.Log(idField, len(idField))
 	id, err := strconv.Atoi(idField[0])

@@ -137,7 +137,7 @@ type RWMutex_ struct{}
 
 func (r *RWMutex_) Lock_() {}
 func (r *RWMutex_) RLocker_() Locker_ { // 最精彩的函数
-	return (*rlocker_)(r) // 转换为 *rlocker_ 类型，并返回接口，只对外暴漏接口
+	return (*rlocker_)(r) // 转换为 *rlocker_ 未输出类型，并返回接口，只对外暴漏接口
 }
 
 type rlocker_ RWMutex_

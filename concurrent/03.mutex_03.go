@@ -105,7 +105,7 @@ Copy 已使用的 Mutex
 				第二步：再从 TLS 中获取 goroutine 结构的 g 指针
 				第三步：再从 g 指针中取出 goroutine id
 			不同版本的 goroutine
-				注意，不同 Go 版本的 goroutine 的结构可能不同，所以需要根据 Go 的不同版本进行调整
+				注意，不同 Go 版本的 goroutine 的结构可能不同，所以需要根据 Go 的不同版本进行调整
 				当然了，如果想要搞清楚各个版本的 goroutine 结构差异，所涉及的内容又过于底层而且复杂，学习成本太高
 			三方库：petermattis/goid
 				获取 goroutine id，可以支持多个 Go 版本的 goroutine
@@ -195,7 +195,7 @@ Copy 已使用的 Mutex
 			比如 1318、2074、2542 等
 	etcd
 		简介
-			tcd 是一个非常知名的分布式一致性的 key-value 存储技术，被用来做配置共享和服务发现
+			etcd 是一个非常知名的分布式一致性的 key-value 存储技术，被用来做配置共享和服务发现
 		issue 10419：https://github.com/etcd-io/etcd/pull/10419/files
 			一个锁重入导致的问题
 			描述
