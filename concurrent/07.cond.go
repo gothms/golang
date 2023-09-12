@@ -3,9 +3,8 @@ package concurrent
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"sync"
-	"time"
+	"sync/atomic"
 )
 
 /*
@@ -196,20 +195,28 @@ Cond 的实现原理
 
 func CondRunner() {
 	c := sync.NewCond(&sync.Mutex{})
-	var ready int
+	var ready int32
 	for i := 0; i < 10; i++ {
 		go func(i int) {
-			time.Sleep(time.Duration(rand.Int63n(3)) * time.Second)
-			c.L.Lock()
-			ready++
-			c.L.Unlock()
-			log.Printf("运动员 #%d 已准备就绪\n", i)
+			//time.Sleep(time.Duration(rand.Int63n(3)) * time.Second)
+			for {
+				if atomic.CompareAndSwapInt32(&ready, ready, ready+1) {
+					//if atomic.LoadInt32(&ready) == 10 {
+					//	c.Signal() // 总共只唤醒了裁判一次
+					//}
+					break
+				}
+			}
+			//c.L.Lock()
+			//ready++
+			//c.L.Unlock()
+			//log.Printf("运动员 #%d 已准备就绪\n", i)
 			c.Broadcast() // 广播唤醒所有等待者
 		}(i)
 	}
 	c.L.Lock()        // 调用 Wait 的时候没有加锁：Cond 最常见的使用错误
 	for ready != 10 { // Lock 放在 for 外面的原因是可以利用锁保护共享数据的读写。wait总是需要锁
-		c.Wait()
+		c.Wait() // 原子操作 + Broadcast，偶尔会死锁，为什么？
 		fmt.Println("裁判员被唤醒一次")
 	}
 	c.L.Unlock() //所有的运动员是否就绪

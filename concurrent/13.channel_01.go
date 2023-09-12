@@ -125,8 +125,7 @@ chan 数据结构
 		elemtype 和 elemsize：chan 中元素的类型和 size
 			因为 chan 一旦声明，它的元素类型是固定的，即普通类型或者指针类型，所以元素大小也是固定的
 		sendx：处理发送数据的指针在 buf 中的位置
-			一旦接收了新的数据，指针就会加上
-		elemsize，移向下一个位置
+			一旦接收了新的数据，指针就会加上 elemsize，移向下一个位置
 			buf 的总大小是 elemsize 的整数倍，而且 buf 是一个循环列表
 		recvx：处理接收请求时的指针在 buf 中的位置
 			一旦取出数据，此指针会移动到下一个位置
@@ -269,7 +268,7 @@ close
 		往一个已 close 的 chan 发送数据，其实它是 grpc 的一个 bug（grpc issue 2695）
 			修复办法就是不 close 这个 chan 就好了
 		图示
-			13.channel_01_demo_etcd_02.jpg
+			13.channel_01_demo_etcd_03.jpg
 
 总结
 	chan 的值和状态有多种情况
@@ -285,7 +284,15 @@ close
 	1.有一道经典的使用 Channel 进行任务编排的题，你可以尝试做一下：有四个 goroutine，编号为 1、2、3、4
 		每秒钟会有一个 goroutine 打印出它自己的编号，要求你编写一个程序，让输出的编号总是按照 1、2、3、4、1、2、3、4、……的顺序打印出来
 	2.chan T 是否可以给 <- chan T 和 chan<- T 类型的变量赋值？反过来呢？
-
+		可以，反过来不行
+		func TChannelQuestion1() <-chan TChannel {
+			t := make(chan TChannel, 1)
+			return t
+		}
+		func TChannelQuestion2() chan<- TChannel {
+			t := make(chan TChannel, 1)
+			return t
+		}
 重要
 	1.不要在 Unlock 后 Sleep，否则死锁
 	2.先 Unlock，再 Signal/Broadcast

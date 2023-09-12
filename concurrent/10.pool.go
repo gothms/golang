@@ -44,7 +44,7 @@ sync.Pool 的使用方法
 	API
 		New、Get 和 Put
 	New 字段
-		Pool struct 包含一个 New 字段，这个字段的类型是函数 func() interface{}
+		Pool struct 包含一个 New 字段，这个字段的类型是函数 func() any
 			当调用 Pool 的 Get 方法从池中获取元素，没有更多的空闲元素可返回时，就会调用这个 New 方法来创建新的元素
 			如果你没有设置 New 字段，没有更多的空闲元素可返回时，Get 方法将返回 nil，表明当前没有可用的元素
 		可变字段
@@ -98,8 +98,7 @@ sync.Pool 的使用方法
 		垃圾回收时 sync.Pool 处理逻辑
 			poolCleanup
 		local 字段
-			因为所有当前主要的空闲可用的元素都存放在
-			local 字段中，请求元素时也是优先从 local 字段中查找可用的元素
+			因为所有当前主要的空闲可用的元素都存放在 local 字段中，请求元素时也是优先从 local 字段中查找可用的元素
 			local 字段包含一个 poolLocalInternal 字段，并提供 CPU 缓存对齐，从而避免 false sharing
 		poolLocalInternal
 			包含两个字段：private 和 shared
@@ -360,7 +359,7 @@ Worker Pool
 			它的任务的执行结果需要在 ResultChan 和 ErrChan 中去获取，没有提供阻塞的方法，但是它可以在初始化的时候设置 Worker 的数量和任务数
 	其他 Worker Pool
 		panjf2000/ants、Jeffail/tunny、benmanns/goworker、go-playground/pool、Sherifabdlnaby/gpool等第三方库
-		pond也是一个非常不错的 Worker Pool，关注度目前不是很高，但是功能非常齐全
+		pond 也是一个非常不错的 Worker Pool，关注度目前不是很高，但是功能非常齐全
 
 总结
 	Pool

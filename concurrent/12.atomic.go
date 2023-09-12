@@ -151,7 +151,7 @@ Value 类型
 		论文 link：
 	Go 实现
 		LKQueue ==========lock-free queue==========
-		问题：Dequeue 后，为什么不把 q.head 置为 nil？
+		问题：Dequeue 后，头已经被取走，为什么不把 q.head 置为 nil？
 
 总结
 	对一个地址的赋值是原子操作吗？
@@ -187,7 +187,7 @@ type LKQueue struct {
 	tail unsafe.Pointer
 }
 type node struct { // 通过链表实现，这个数据结构代表链表中的节点
-	value interface{}
+	value any
 	next  unsafe.Pointer
 }
 
@@ -198,7 +198,7 @@ func NewLKQueue() *LKQueue {
 
 // Enqueue 入队
 // 入队的时候，通过 CAS 操作将一个元素添加到队尾，并且移动尾指针
-func (q *LKQueue) Enqueue(v interface{}) {
+func (q *LKQueue) Enqueue(v any) {
 	n := &node{value: v}
 	for {
 		tail := load(&q.tail)
@@ -218,7 +218,7 @@ func (q *LKQueue) Enqueue(v interface{}) {
 
 // Dequeue 出队，没有元素则返回nil
 // 出队的时候移除一个节点，并通过 CAS 操作移动 head 指针，同时在必要的时候移动尾指针
-func (q *LKQueue) Dequeue() interface{} {
+func (q *LKQueue) Dequeue() any {
 	for {
 		head := load(&q.head)
 		tail := load(&q.tail)
@@ -228,13 +228,10 @@ func (q *LKQueue) Dequeue() interface{} {
 				if next == nil { // 说明是空队列
 					return nil
 				}
-				// 只是尾指针还没有调整，尝试调整它指向下一个
-				cas(&q.tail, tail, next)
+				cas(&q.tail, tail, next) // 只是尾指针还没有调整，尝试调整它指向下一个
 			} else {
-				// 读取出队的数据
-				v := next.value
-				// 既然要出队了，头指针移动到下一个
-				if cas(&q.head, head, next) {
+				v := next.value               // 读取出队的数据
+				if cas(&q.head, head, next) { // 既然要出队了，头指针移动到下一个
 					return v // Dequeue is done. return
 				}
 			}
@@ -265,9 +262,11 @@ func AtomicValueConfig() {
 		//var last Config
 		for {
 			cond.L.Lock()
-			cond.Wait()                 // 等待变更信号：不要一直读
-			c := config.Load().(Config) // 读取新的配置
-			fmt.Printf("new config: %+v\n %[1]T\n", c)
+			cond.Wait()                     // 等待变更信号：不要一直读
+			c, ok := config.Load().(Config) // 读取新的配置
+			if ok {
+				fmt.Printf("new config: %+v\n %[1]T\n", c)
+			}
 			cond.L.Unlock()
 
 			//if c := config.Load().(Config); c != last {

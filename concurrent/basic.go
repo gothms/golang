@@ -6,11 +6,16 @@ package concurrent
 
 拷贝
 	sync 包的同步原语在使用后不能复制
-	“不能”作为参数传递
+		“不能”作为参数传递
+	Once：可拷贝
 开箱即用
 	Mutex
 	RWMutex
 	WaitGroup：可重用
+	Cond：非开箱即用
+	Once
+	Map
+
 
 必须初始化
 	Channel

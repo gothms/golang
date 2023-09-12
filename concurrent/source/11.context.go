@@ -273,8 +273,8 @@ func withCancel(parent Context) *cancelCtx {
 	if parent == nil {
 		panic("cannot create context from nil parent")
 	}
-	c := newCancelCtx(parent)
-	propagateCancel(parent, c) // 把c朝上传播
+	c := newCancelCtx(parent)  // 要返回的 cancelCtx
+	propagateCancel(parent, c) // 把 c 朝上传播
 	return c
 }
 
@@ -305,37 +305,37 @@ var goroutines atomic.Int32
 // propagateCancel 方法会顺着 parent 路径往上找，直到找到一个 cancelCtx，或者为 nil
 func propagateCancel(parent Context, child canceler) {
 	done := parent.Done()
-	if done == nil {
+	if done == nil { // 如 emptyCtx 的 Done 返回 nil
 		return // parent is never canceled
 	}
 
 	select {
-	case <-done:
+	case <-done: // 检查 parent 是否 close
 		// parent is already canceled
 		child.cancel(false, parent.Err(), Cause(parent))
 		return
-	default:
+	default: // 没有 close
 	}
 
 	if p, ok := parentCancelCtx(parent); ok {
 		p.mu.Lock()
-		if p.err != nil {
+		if p.err != nil { // p 已经 cancel
 			// parent has already been canceled
 			child.cancel(false, p.err, p.cause)
 		} else {
-			if p.children == nil {
+			if p.children == nil { // 检查 p 的 children 集合
 				p.children = make(map[canceler]struct{})
 			}
 			p.children[child] = struct{}{} // 如果找 cancelCtx 不为空，就把自己加入到这个 cancelCtx 的 child，以便这个 cancelCtx 被取消的时候通知自己
 		}
 		p.mu.Unlock()
 	} else { // 如果找 cancelCtx 为空，会新起一个 goroutine，由它来监听 parent 的 Done 是否已关闭
-		goroutines.Add(1)
+		goroutines.Add(1) // goroutine 数量 +1
 		go func() {
 			select {
-			case <-parent.Done():
+			case <-parent.Done(): // 监听 parent 的 cancel
 				child.cancel(false, parent.Err(), Cause(parent))
-			case <-child.Done():
+			case <-child.Done(): // 监听自己的 cancel
 			}
 		}()
 	}
@@ -353,19 +353,19 @@ var cancelCtxKey int
 // parentCancelCtx 返回父节点的底层 *cancelCtx
 func parentCancelCtx(parent Context) (*cancelCtx, bool) {
 	done := parent.Done()
-	if done == closedchan || done == nil {
+	if done == closedchan || done == nil { // parent 已 close，或为 emptyCtx
 		return nil, false
 	}
-	// 通过查找 parent.Value(&cancelCtxKey)来找到最内层的*cancelCtx，然后检查 parent.Done() 是否与该*cancelCtx 匹配
-	p, ok := parent.Value(&cancelCtxKey).(*cancelCtx)
+	// 通过查找 parent.Value(&cancelCtxKey)来找到最内层的 *cancelCtx，然后检查 parent.Done() 是否与该 *cancelCtx 匹配
+	p, ok := parent.Value(&cancelCtxKey).(*cancelCtx) // 向上查找 cancelCtx
 	if !ok {
 		return nil, false
 	}
 	pdone, _ := p.done.Load().(chan struct{})
-	if pdone != done {
+	if pdone != done { // 检查 parent.Done() 是否与该 *cancelCtx 匹配
 		return nil, false
 	}
-	return p, true
+	return p, true // 找到父节点的底层 *cancelCtx
 }
 
 // removeChild removes a context from its parent.
@@ -504,7 +504,6 @@ func WithDeadline(parent Context, d time.Time) (Context, CancelFunc) {
 		return WithCancel(parent) // 如果它的截止时间晚于 parent 的截止时间，那么就以 parent 的截止时间为准，并返回一个类型为 cancelCtx 的 Context
 	}
 	c := &timerCtx{
-
 		cancelCtx: newCancelCtx(parent),
 		deadline:  d,
 	}
@@ -639,9 +638,9 @@ func value(c Context, key any) any {
 			if key == ctx.key {
 				return ctx.val
 			}
-			c = ctx.Context
+			c = ctx.Context // Context 的实现都嵌入了 parent
 		case *cancelCtx:
-			if key == &cancelCtxKey {
+			if key == &cancelCtxKey { // cancelCtxKey 标识的 key、val 是 int（类似于 cancelCtx 的 id） 和对应的 cancelCtx
 				return c
 			}
 			c = ctx.Context
@@ -653,7 +652,7 @@ func value(c Context, key any) any {
 		case *emptyCtx:
 			return nil
 		default:
-			return c.Value(key)
+			return c.Value(key) // 链式查找 parent
 		}
 	}
 }

@@ -95,7 +95,7 @@ func (c *Cond) Broadcast() {
 // copyChecker holds back pointer to itself to detect object copying.
 type copyChecker uintptr
 
-// nocpoy是静态检查，copyChecker是运行时检查，分别应用不同阶段。而像 Mutex 只有静态检查
+// noCopy 是静态检查，copyChecker 是运行时检查，分别应用不同阶段。而像 Mutex 只有静态检查
 func (c *copyChecker) check() {
 	if uintptr(*c) != uintptr(unsafe.Pointer(c)) &&
 		!atomic.CompareAndSwapUintptr((*uintptr)(c), 0, uintptr(unsafe.Pointer(c))) &&

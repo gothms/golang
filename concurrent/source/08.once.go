@@ -60,17 +60,18 @@ func (o *Once) Do(f func()) {
 	// This is why the slow path falls back to a mutex, and why
 	// the atomic.StoreUint32 must be delayed until after f returns.
 
-	if atomic.LoadUint32(&o.done) == 0 {
+	if atomic.LoadUint32(&o.done) == 0 { // 错误实现：if !atomic.CompareAndSwapUint32(&o.done, 0, 1)
 		// Outlined slow-path to allow inlining of the fast-path.
 		o.doSlow(f)
 	}
 }
 
+// Mutex + 双检查机制（double-checking）
 func (o *Once) doSlow(f func()) {
-	o.m.Lock()
+	o.m.Lock() // 保证只有一个 go 进行初始化
 	defer o.m.Unlock()
-	if o.done == 0 { // 双检查机制
-		defer atomic.StoreUint32(&o.done, 1)
-		f()
+	if o.done == 0 { // 双检查机制，再次检查 o.done 是否为 0
+		defer atomic.StoreUint32(&o.done, 1) // 第一次执行后，将 o.done 设置为 1
+		f()                                  // 只有第一次调用 Do 方法时 f 参数才会执行
 	}
 }

@@ -49,9 +49,11 @@ import (
 type Pool struct {
 	noCopy noCopy
 
+	// 所有当前主要的空闲可用的元素都存放在 local 字段中，请求元素时也是优先从 local 字段中查找可用的元素
 	local     unsafe.Pointer // local fixed-size per-P pool, actual type is [P]poolLocal
 	localSize uintptr        // size of the local array
 
+	// 每次垃圾回收的时候，Pool 会把 victim 中的对象移除，然后把 local 的数据给 victim
 	victim     unsafe.Pointer // local from previous cycle
 	victimSize uintptr        // size of victims array
 
@@ -135,7 +137,7 @@ func (p *Pool) Get() any {
 		// Try to pop the head of the local shard. We prefer
 		// the head over the tail for temporal locality of
 		// reuse.
-		x, _ = l.shared.popHead() // 从当前的local.shared弹出一个，注意是从head读取并移除
+		x, _ = l.shared.popHead() // 从当前的 local.shared 弹出一个，注意是从 head 读取并移除
 		if x == nil {             // 如果没有，则去偷一个
 			x = p.getSlow(pid)
 		}
@@ -147,7 +149,7 @@ func (p *Pool) Get() any {
 			race.Acquire(poolRaceAddr(x))
 		}
 	}
-	if x == nil && p.New != nil { // 如果没有获取到，尝试使用New函数生成一个新的
+	if x == nil && p.New != nil { // 如果没有获取到，尝试使用 New 函数生成一个新的
 		x = p.New()
 	}
 	return x
@@ -159,7 +161,8 @@ func (p *Pool) getSlow(pid int) any {
 	locals := p.local                            // load-consume
 	// Try to steal one element from other procs.
 	for i := 0; i < int(size); i++ { // 从其它proc中尝试偷取一个元素
-		l := indexLocal(locals, (pid+i+1)%int(size)) // pid+i+1 按照循环数组方式求索引。因为 pid+(size-1)+1%size = pid，为什么遍历时不 size-1 呢？
+		l := indexLocal(locals, (pid+i+1)%int(size)) // pid+i+1 按照循环数组方式求索引。因为 pid+(size-1)+1%size = pid
+		// 为什么遍历时不 size-1 呢？为了 popTail 自己的 shared？
 		if x, _ := l.shared.popTail(); x != nil {
 			return x
 		}
@@ -168,17 +171,17 @@ func (p *Pool) getSlow(pid int) any {
 	// Try the victim cache. We do this after attempting to steal
 	// from all primary caches because we want objects in the
 	// victim cache to age out if at all possible.
-	size = atomic.LoadUintptr(&p.victimSize) // 如果其它proc也没有可用元素，那么尝试从vintim中获取
+	size = atomic.LoadUintptr(&p.victimSize) // 如果其它proc也没有可用元素，那么尝试从 vintim 中获取
 	if uintptr(pid) >= size {
 		return nil
 	}
 	locals = p.victim
 	l := indexLocal(locals, pid)
-	if x := l.private; x != nil { // 同样的逻辑，先从vintim中的local private获取
+	if x := l.private; x != nil { // 同样的逻辑，先从 vintim 中的 local private获取
 		l.private = nil
 		return x
 	}
-	for i := 0; i < int(size); i++ { // 从vintim其它proc尝试偷取
+	for i := 0; i < int(size); i++ { // 从 vintim 其它 proc 尝试偷取
 		l := indexLocal(locals, (pid+i)%int(size))
 		if x, _ := l.shared.popTail(); x != nil {
 			return x
@@ -241,13 +244,13 @@ func poolCleanup() {
 	// pinned section (in effect, this has all Ps pinned).
 
 	// Drop victim caches from all pools.
-	for _, p := range oldPools { // 丢弃当前victim, STW所以不用加锁
+	for _, p := range oldPools { // 丢弃当前 victim, STW 所以不用加锁
 		p.victim = nil
 		p.victimSize = 0
 	}
 
 	// Move primary cache to victim cache.
-	for _, p := range allPools { // 将local复制给victim, 并将原local置为nil
+	for _, p := range allPools { // 将 local 复制给 victim, 并将原 local 置为 nil
 		p.victim = p.local
 		p.victimSize = p.localSize
 		p.local = nil

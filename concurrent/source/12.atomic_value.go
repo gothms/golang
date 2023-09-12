@@ -5,6 +5,7 @@
 package source
 
 import (
+	"sync"
 	"unsafe"
 )
 
@@ -26,6 +27,7 @@ type efaceWords struct {
 // Load returns the value set by the most recent Store.
 // It returns nil if there has been no call to Store for this Value.
 func (v *Value) Load() (val any) {
+	sync.Mutex{}
 	vp := (*efaceWords)(unsafe.Pointer(v))
 	typ := LoadPointer(&vp.typ)
 	if typ == nil || typ == unsafe.Pointer(&firstStoreInProgress) {

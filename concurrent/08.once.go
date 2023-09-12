@@ -54,7 +54,7 @@ Once 的使用场景
 			once.Do(func() {
 				conn, err = net.Dial("tcp", addr)
 			})
-	示例：标准库内部 cache的实现上，就使用了 Once 初始化 Cache 资源，包括 defaultDir 值的获取
+	示例：标准库内部 cache 的实现上，就使用了 Once 初始化 Cache 资源，包括 defaultDir 值的获取
 		源码文件：cmd/go/internal/cache/default.go
 		func Default() *Cache { // 获取默认的Cache
 			defaultOnce.Do(initDefaultCache) // 初始化cache
@@ -100,7 +100,7 @@ Once 的使用场景
 			当你使用 Once 的时候，你也可以尝试采用这种结构
 			将值和 Once 封装成一个新的数据结构，提供只初始化一次的值
 	Once 并发原语解决的问题和使用场景
-		Once 常常用来初始化单例资源，或者并发访问只需初始化一次的共享资源，或者在测试的时候初始化一次测试资
+		Once 常常用来初始化单例资源，或者并发访问只需初始化一次的共享资源，或者在测试的时候初始化一次测试资源
 
 如何实现一个 Once？
 	错误实现
@@ -150,7 +150,7 @@ Once 的使用场景
 		既可以返回当前调用 Do 方法是否正确完成，还可以在初始化失败后调用 Do 方法再次尝试初始化，直到初始化成功才不再初始化了
 			改变就是 Do 方法和参数 f 函数都会返回 error，如果 f 执行失败，会把这个错误信息返回
 			对 slowDo 方法也做了调整，如果 f 调用失败，我们不会更改 done 字段的值，这样后续 degoroutine 还会继续调用 f
-			 如果 f 执行成功，才会修改 done 的值为 1
+			如果 f 执行成功，才会修改 done 的值为 1
 		示例 Once ==========一个功能更加强大的Once==========
 	新的需求
 		如果初始化后我们就去执行其它的操作，标准库的 Once 并不会告诉你是否初始化完成了，只是让你放心大胆地去执行 Do 方法
@@ -251,6 +251,8 @@ Once 的踩坑案例
 				var once Once
 				once.doSlow()
 			}
+		解决方案
+			在 Do 调用之前赋值新的 Once
 	小结
 		Ian Lance Taylor 介绍的 Reset 方法没有错误
 		但是你在使用的时候千万别再初始化函数中 Reset 这个 Once，否则势必会导致 Unlock 一个未加锁的 Mutex 的错误
@@ -277,10 +279,21 @@ Once 的踩坑案例
 		fast path的一个好处是此方法可以内联
 		...
 	2.Once 在第一次使用之后，还能复制给其它变量使用吗？
+		可以
 */
 
+// DockerOncePanic ==========Docker Once panic==========
+func DockerOncePanic() {
+	fmt.Println("Hello, playground")
+	m := new(MuOnce)
+	fmt.Println(m.strings())
+	fmt.Println(m.strings())
+
+	mm := m
+	fmt.Println(mm.strings())
+}
+
 // MuOnce 一个组合的并发原语
-// ==========Docker Once panic==========
 type MuOnce struct {
 	sync.RWMutex
 	sync.Once
@@ -292,7 +305,7 @@ type MuOnce struct {
 func (m *MuOnce) refresh() {
 	m.Lock()
 	defer m.Unlock()
-	m.Once = sync.Once{}
+	//m.Once = sync.Once{}
 	m.mtime = time.Now()
 	m.vals = []string{m.mtime.String()}
 }
@@ -302,17 +315,12 @@ func (m *MuOnce) strings() []string {
 	now := time.Now()
 	m.RLock()
 	if now.After(m.mtime) {
+		m.Once = sync.Once{}  // 解决方案
 		defer m.Do(m.refresh) // 使用refresh函数重新初始化
 	}
 	vals := m.vals
 	m.RUnlock()
 	return vals
-}
-func DockerOncePanic() {
-	fmt.Println("Hello, playground")
-	m := new(MuOnce)
-	fmt.Println(m.strings())
-	fmt.Println(m.strings())
 }
 
 // Once ==========一个功能更加强大的Once==========

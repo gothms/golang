@@ -62,7 +62,7 @@ func reflect_makechan(t *chantype, size int) *hchan {
 }
 
 func makechan64(t *chantype, size int64) *hchan {
-	if int64(int(size)) != size {
+	if int64(int(size)) != size { // 超出大小
 		panic(plainError("makechan: size out of range"))
 	}
 
@@ -77,11 +77,11 @@ func makechan(t *chantype, size int) *hchan { // 它会根据 chan 的容量的�
 	if elem.size >= 1<<16 {
 		throw("makechan: invalid channel element type")
 	}
-	if hchanSize%maxAlign != 0 || elem.align > maxAlign {
+	if hchanSize%maxAlign != 0 || elem.align > maxAlign { // 不是 8 的倍数，或...
 		throw("makechan: bad alignment")
 	}
 
-	mem, overflow := math.MulUintptr(elem.size, uintptr(size))
+	mem, overflow := math.MulUintptr(elem.size, uintptr(size)) // 循环队列的大小是否 overflow
 	if overflow || mem > maxAlloc-hchanSize || size < 0 {
 		panic(plainError("makechan: size out of range"))
 	}
@@ -92,12 +92,12 @@ func makechan(t *chantype, size int) *hchan { // 它会根据 chan 的容量的�
 	// TODO(dvyukov,rlh): Rethink when collector can move allocated objects.
 	var c *hchan
 	switch {
-	case mem == 0:
+	case mem == 0: // chan的size或者元素的size是0
 		// Queue or element size is zero.
 		c = (*hchan)(mallocgc(hchanSize, nil, true)) // chan的size或者元素的size是0，不必创建buf
 		// Race detector uses this location for synchronization.
 		c.buf = c.raceaddr()
-	case elem.ptrdata == 0:
+	case elem.ptrdata == 0: // 元素不是指针类型
 		// Elements do not contain pointers.
 		// Allocate hchan and buf in one call.
 		c = (*hchan)(mallocgc(hchanSize+mem, nil, true)) // 元素不是指针，分配一块连续的内存给hchan数据结构和buf
@@ -220,7 +220,7 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 	// 第五部分，buf还没满
 	if c.qcount < c.dataqsiz {
 		// Space is available in the channel buffer. Enqueue the element to send.
-		qp := chanbuf(c, c.sendx)
+		qp := chanbuf(c, c.sendx) // 发送数据的指针所在位置，即 ep 放入 qp
 		if raceenabled {
 			racenotify(c, c.sendx, nil)
 		}
@@ -381,7 +381,7 @@ func closechan(c *hchan) { // 通过 close 函数，可以把 chan 关闭，编�
 	var glist gList
 
 	// release all readers
-	for { // 释放所有的reader，并唤醒
+	for { // 释放所有的 reader，并唤醒
 		sg := c.recvq.dequeue()
 		if sg == nil {
 			break
@@ -541,7 +541,7 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 	// 第五部分, 没有等待的sender, buf中有数据
 	if c.qcount > 0 {
 		// Receive directly from queue
-		qp := chanbuf(c, c.recvx)
+		qp := chanbuf(c, c.recvx) // 接收数据的指针所在位置
 		if raceenabled {
 			racenotify(c, c.recvx, nil)
 		}
@@ -619,7 +619,7 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 // sg must already be dequeued from c.
 // A non-nil ep must point to the heap or the caller's stack.
 func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
-	if c.dataqsiz == 0 {
+	if c.dataqsiz == 0 { // buf 为空
 		if raceenabled {
 			racesync(c, sg)
 		}
@@ -627,12 +627,12 @@ func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
 			// copy data from sender
 			recvDirect(c.elemtype, sg, ep)
 		}
-	} else {
+	} else { // 优先从 buf 中读取数据
 		// Queue is full. Take the item at the
 		// head of the queue. Make the sender enqueue
 		// its item at the tail of the queue. Since the
 		// queue is full, those are both the same slot.
-		qp := chanbuf(c, c.recvx)
+		qp := chanbuf(c, c.recvx) // 接收数据的指针所在位置
 		if raceenabled {
 			racenotify(c, c.recvx, nil)
 			racenotify(c, c.recvx, sg)
