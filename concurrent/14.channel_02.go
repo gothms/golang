@@ -231,8 +231,6 @@ map-reduce
 	channel适不适用于传输大文件？还有就是传输大文件的性能情况是怎样的？
 		channel是线程内的，你怎么有传递大文件的需求，什么是大文件传输？
 		channel可以传递大的byte slice，没有性能问题。要是大数组就不合适了
-
-
 */
 
 // MapChanReduce ==========map-reduce 示例==========
@@ -308,7 +306,7 @@ func TakeN(done <-chan struct{}, valueStream <-chan interface{}, num int) <-chan
 // FanOut ==========扇出模式示例==========
 func FanOut(ch <-chan interface{}, out []chan interface{}, async bool) {
 	go func() {
-		defer func() { //退出时关闭所有的输出chan
+		defer func() { // 退出时关闭所有的输出chan
 			for i := 0; i < len(out); i++ {
 				close(out[i])
 			}
@@ -317,7 +315,7 @@ func FanOut(ch <-chan interface{}, out []chan interface{}, async bool) {
 			v := v // 因为异步，所以把值记录下来
 			for i := 0; i < len(out); i++ {
 				i := i
-				if async { //异步
+				if async { // 异步
 					go func() {
 						out[i] <- v // 放入到输出chan中,异步方式
 					}()
@@ -376,7 +374,8 @@ func mergeTwo(a, b <-chan interface{}) <-chan interface{} {
 	c := make(chan interface{})
 	go func() {
 		defer close(c)
-		for a != nil || b != nil { //只要还有可读的chan
+		// 如果都未 nil，就会永远阻塞
+		for a != nil || b != nil { // 只要还有可读的chan
 			select {
 			case v, ok := <-a:
 				if !ok { // a 已关闭，设置为nil
@@ -441,7 +440,15 @@ func OrDone(channels ...<-chan interface{}) <-chan interface{} {
 	return orDone
 }
 
-// ChannelMutex ==========使用chan实现互斥锁==========
+// ChannelMutexDemo ==========使用chan实现互斥锁==========
+func ChannelMutexDemo() {
+	m := NewMutex()
+	ok := m.TryLock()
+	fmt.Printf("locked %v\n", ok)
+	ok = m.TryLock()
+	fmt.Printf("locked %v\n", ok)
+}
+
 type ChannelMutex struct {
 	ch chan struct{}
 }
@@ -451,11 +458,9 @@ func NewMutex() *ChannelMutex { // 使用锁需要初始化
 	mu.ch <- struct{}{}
 	return mu
 }
-
 func (m *ChannelMutex) Lock() { // 请求锁，直到获取到
 	<-m.ch
 }
-
 func (m *ChannelMutex) Unlock() { // 解锁
 	select {
 	case m.ch <- struct{}{}:
@@ -463,7 +468,6 @@ func (m *ChannelMutex) Unlock() { // 解锁
 		panic("unlock of unlocked mutex")
 	}
 }
-
 func (m *ChannelMutex) TryLock() bool { // 尝试获取锁
 	select {
 	case <-m.ch:
@@ -472,7 +476,6 @@ func (m *ChannelMutex) TryLock() bool { // 尝试获取锁
 	}
 	return false
 }
-
 func (m *ChannelMutex) LockTimeout(timeout time.Duration) bool { // 加入一个超时的设置
 	timer := time.NewTimer(timeout)
 	select {
@@ -483,17 +486,8 @@ func (m *ChannelMutex) LockTimeout(timeout time.Duration) bool { // 加入一个
 	}
 	return false
 }
-
 func (m *ChannelMutex) IsLocked() bool { // 锁是否已被持有
 	return len(m.ch) == 0
-}
-
-func ChannelMutexDemo() {
-	m := NewMutex()
-	ok := m.TryLock()
-	fmt.Printf("locked %v\n", ok)
-	ok = m.TryLock()
-	fmt.Printf("locked %v\n", ok)
 }
 
 // ChannelShutdownDoCleanup ==========“两阶段”优雅退出==========

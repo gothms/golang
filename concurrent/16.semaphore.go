@@ -217,17 +217,17 @@ func SemaWorkerPool() {
 		task       = make([]int, maxWorkers*4)                // 任务数，是worker的四倍
 	)
 	ctx := context.Background()
-	for i := range task {
+	for i := range task { // main goroutine 相当于一个 dispacher，负责任务的分发
 		// 如果没有worker可用，会阻塞在这里，直到某个worker被释放
 		if err := sema.Acquire(ctx, 1); err != nil {
-			break
+			break // 如果获取不成功，就等到有信号量可以使用的时候，再去获取
 		}
 		// 启动worker goroutine
-		go func(i int) {
-			defer sema.Release(1)
+		go func(i int) { // 它先请求信号量，如果获取成功，就会启动一个 goroutine 去处理计算
+			defer sema.Release(1)              // 然后，这个 goroutine 会释放这个信号量
 			time.Sleep(100 * time.Millisecond) // 模拟一个耗时操作
 			task[i] = i + 1
-		}(i)
+		}(i) // 有意思的是，信号量的获取是在 main goroutine，信号量的释放是在 worker goroutine 中
 	}
 	// 请求所有的worker,这样能确保前面的worker都执行完
 	if err := sema.Acquire(ctx, int64(maxWorkers)); err != nil {

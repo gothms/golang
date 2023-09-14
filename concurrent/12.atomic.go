@@ -198,12 +198,49 @@ func NewLKQueue() *LKQueue {
 
 // Enqueue 入队
 // 入队的时候，通过 CAS 操作将一个元素添加到队尾，并且移动尾指针
-func (q *LKQueue) Enqueue(v any) {
+func (q *LKQueue) Enqueue(v any) (cnt int) {
 	n := &node{value: v}
 	for {
 		tail := load(&q.tail)
 		next := load(&tail.next)
 		if tail == load(&q.tail) { // 尾还是尾
+			if next == nil { // 还没有新数据入队
+				if cas(&tail.next, next, n) { //保证了：增加到队尾
+					cas(&q.tail, tail, n) //入队成功，移动尾巴指针
+					return
+				}
+			} else { // 已有新数据加到队列后面，需要移动尾指针
+				cas(&q.tail, tail, next)
+			}
+		}
+		cnt++ // 测试 cas 不成功的次数，应删掉
+	}
+}
+func (q *LKQueue) Front() *node {
+	for {
+		head := load(&q.head)
+		next := load(&head.next)
+		if head == load(&q.head) {
+			return next
+		}
+	}
+}
+func (q *LKQueue) Range(n *node) {
+	if n == nil {
+		n = (*node)(load(&q.head).next)
+	}
+	//for cur := (*node)(load(&q.tail).next); cur != nil; cur = (*node)(cur.next) {
+	for cur := n; cur != nil; cur = (*node)(cur.next) {
+		fmt.Print(cur.value, " ")
+	}
+}
+func (q *LKQueue) EnqueueLone(v any) (cnt int, n *node) {
+	n = &node{value: v}
+	for {
+		tail := load(&q.tail)
+		next := load(&tail.next)
+		if tail == load(&q.tail) { // 尾还是尾
+			time.Sleep(time.Millisecond * 10)
 			if next == nil { // 还没有新数据入队
 				if cas(&tail.next, next, n) { //增加到队尾
 					cas(&q.tail, tail, n) //入队成功，移动尾巴指针
@@ -211,6 +248,7 @@ func (q *LKQueue) Enqueue(v any) {
 				}
 			} else { // 已有新数据加到队列后面，需要移动尾指针
 				cas(&q.tail, tail, next)
+				cnt++
 			}
 		}
 	}

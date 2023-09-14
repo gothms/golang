@@ -10,6 +10,36 @@ import (
 func TestMapChanReduce(t *testing.T) {
 	concurrent.MapChanReduce()
 }
+func TestFanIn(t *testing.T) {
+	sig := func(after time.Duration) <-chan interface{} {
+		c := make(chan interface{})
+		go func() {
+			defer close(c)
+			time.Sleep(after)
+		}()
+		return c
+	}
+	start := time.Now()
+	//<-concurrent.FanInReflect(
+	<-concurrent.FanInRec(
+		nil,
+		sig(1*time.Second),
+		sig(3*time.Second),
+		sig(2*time.Second),
+		sig(4*time.Second),
+		sig(1*time.Second),
+		sig(3*time.Second),
+		sig(4*time.Second),
+		sig(2*time.Second),
+	)
+	//var ch chan int
+	//go func() {
+	//	v := <-ch	// 此 go 会永远阻塞
+	//	fmt.Println(v)
+	//}()
+	fmt.Printf("done after %v", time.Since(start))
+}
+
 func TestOrDone(t *testing.T) {
 	sig := func(after time.Duration) <-chan interface{} {
 		c := make(chan interface{})
