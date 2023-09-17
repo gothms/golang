@@ -126,7 +126,7 @@ SingleFlight 和 CyclicBarrier：请求合并和循环栅栏该怎么用？
 
 循环栅栏 CyclicBarrier
 	循环栅栏（CyclicBarrier），它常常应用于重复进行一组 goroutine 同时执行的场景中
-		CyclicBarrier允许一组 goroutine 彼此等待，到达一个共同的执行点
+		CyclicBarrier 允许一组 goroutine 彼此等待，到达一个共同的执行点
 		同时，因为它可以被重复使用，所以叫循环栅栏。具体的机制是，大家都在栅栏前等待，等全部都到齐了，就抬起栅栏放行
 	Java 实现
 		事实上，这个 CyclicBarrier 是参考 Java CyclicBarrier 和 C# Barrier的功能实现的
@@ -200,7 +200,7 @@ SingleFlight 和 CyclicBarrier：请求合并和循环栅栏该怎么用？
 			关键代码
 				func NewH2O() *H2O {
 					return &H2O{
-						semaH: semaphore.NewWeighted(2), //氢原子需要两个
+						semaH: semaphore.NewWeighted(2), // 氢原子需要两个
 						semaO: semaphore.NewWeighted(1), // 氧原子需要一个
 						b:     cyclicbarrier.New(3),     // 需要三个原子才能合成
 					}
