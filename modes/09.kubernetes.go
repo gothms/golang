@@ -5,6 +5,9 @@ import (
 )
 
 /*
+Go 编程模式：Kubernetes Visitor模式
+
+
 Kubernetes 的 kubectl 命令中的使用到的一个编程模式：
 	Visitor：
 		将算法与操作对象的结构分离的一种方法
@@ -179,7 +182,7 @@ func (v LogVisitor) Visit(fn VisitorFunc) error {
 	})
 }
 
-//DecoratedVisitor 用 修饰器模式 重构
+// DecoratedVisitor 用 修饰器模式 重构
 type DecoratedVisitor struct {
 	visitor    Visitor
 	decorators []VisitorFunc

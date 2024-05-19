@@ -1,7 +1,7 @@
 package _03_test
 
 import (
-	. "golang/03_test"
+	. "golang/begin/03_test"
 	"testing"
 )
 

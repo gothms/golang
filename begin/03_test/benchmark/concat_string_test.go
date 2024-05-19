@@ -14,7 +14,7 @@ $ go test -bench=方法名
 		使用 . 前，命令行先 cd 到文件所在目录
 	go test -bench=BenchmarkConcatStringByBuilder
 		测试方法时，可以加引号，也可以不不加
-	go test -bench="." concat_string_test.go -benchmem
+	generic\sort_benchmark_test.go
 		测试指定的 .go 文件
 
 $ go test -bench="." -benchmem

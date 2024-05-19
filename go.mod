@@ -1,6 +1,6 @@
 module golang
 
-go 1.20
+go 1.21
 
 require (
 	github.com/coreos/etcd v2.3.8+incompatible
@@ -11,7 +11,7 @@ require (
 	github.com/marusama/cyclicbarrier v1.1.0
 	github.com/petermattis/goid v0.0.0-20230808133559-b036b712a89b
 	github.com/smartystreets/goconvey v1.8.1
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.7.0
 )
 
 require (
@@ -25,4 +25,5 @@ require (
 	github.com/orcaman/concurrent-map v1.0.0 // indirect
 	github.com/orcaman/concurrent-map/v2 v2.0.1 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
+	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
 )
