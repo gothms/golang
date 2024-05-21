@@ -6,9 +6,9 @@ package concurrent
 	https://github.com/smallnest/go-concurrent-quiz
 1-11
 	基本并发原语
-	互斥锁Mutex、读写锁RWMutex
-	并发编排WaitGroup
-	条件变量Cond
+	互斥锁 Mutex、读写锁 RWMutex
+	并发编排 WaitGroup
+	条件变量 Cond
 12
 	原子操作
 13-15
